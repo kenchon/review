@@ -453,6 +453,7 @@ describe('DeleteConfirmModalComponent', () => {
   });
 
   it('should be created', () => {
+	fixture.detectChanges();  // Angularの変更検地を実行する。明示的に設定しないといけない。
     expect(component).toBeTruthy();
   });
 });
@@ -472,7 +473,14 @@ describe('DeleteConfirmModalComponent', () => {
 
 ## 10.3 ユニットテスト
 
+- `TestBed`のメソッド
+	- `configuretestingModule(def)`：テスト対象のコンポーネントを本来のアプリモジュールから切り離す。
+	- `createComponent(comp)`：コンポーネントをインスタンス化する
 
+>**分離単体テスト**
+>コンポーネントは，Angularに強く依存しているため，テスト専用のTest APIが用意されているが，パイプ・サービスのテストは標準的なJasmineのAPIで行うことができる。後者を，分離単体テストという。後者の場合，ソースコードがシンプルで見やすくなるため，こっちの方が推奨される。
+
+- コンポーネントの中に外部テンプレートが含まれる場合，読み込んだときに`.compileComponents()`でコンパイルする必要がある。
 
 # Snipets
 
