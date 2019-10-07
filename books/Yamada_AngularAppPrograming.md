@@ -384,6 +384,7 @@ ngOnChanges(changes: SimpleChanges) {
 @import 'app.component.ext.css';
 ```
 
+# 
 
 # 10 テスト
 Angularでは，ユニットテスト・E2Eテスト（シナリオテスト）をサポートしている。
@@ -506,9 +507,132 @@ describe('DeleteConfirmModalComponent', () => {
 >**テスト駆動開発**
 >- 最初にテストを書き，とりあえずの実装を行い，より洗練させていくという開発スタイル。
 >-  "Clean code that works" が目標。そのために，まずテストに通るコードを作成し，それをリファクタリングする方法をとる。
+
 >**ビヘイビア駆動開発**
 >- コードレベル，ユーザレベルで，期待される振る舞いをテストコードに記述する。
 >- 自然言語に近い形で，振る舞いを記述できるフレームワークが多いらしい。
+
+### コンポーネントのテスト
+**コンポーネント**のテストコード例：
+```js
+import { AppComponent } from './app.component';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixtureAutoDetect } from '@angular/core/testing';
+
+import { By }           from '@angular/platform-browser';
+import { DebugElement } from '@angular/core';
+
+// テストスクリプト本体（は，describe()で囲まれる）
+describe('AppComponent', function () {
+  let de: DebugElement;
+  let comp: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+
+  beforeEach(() => {
+    // テストモジュールを準備
+    TestBed.configureTestingModule({
+      declarations: [ AppComponent ],
+      // ComponentFixtureAutoDetect を用いると，detectChanges()しなくても変更検知してくれるようになる。
+      providers: [
+        { provide: ComponentFixtureAutoDetect, useValue: true }
+      ]
+    });
+    
+    // コンポーネントをインスタンス化
+    fixture = TestBed.createComponent(AppComponent);
+    comp = fixture.componentInstance;
+    //テスト対象の要素を取得
+    de = fixture.debugElement.query(By.css('h1'));
+  });
+  
+  // <h1>要素の配下に「angular」の文字列が含まれているかを検証
+  it('<h1>要素のテキストを確認', () => {
+    fixture.detectChanges();
+    const h1 = de.nativeElement;
+    expect(h1.innerText).toMatch(/angular/i);
+  });
+  
+  // nameプロパティの更新がテンプレートに反映されているかを検証
+  it('nameプロパティの変化を確認', () => {
+    comp.name = 'JavaScript';
+    fixture.detectChanges();
+    const h1 = de.nativeElement;
+    expect(h1.innerText).toMatch(/javascript/i);
+  });
+});
+```
+
+- `TestBed`：ユニットテストのための環境を初期化・設定するためのクラス
+- `createComponent(comp)`：コンポーネントのインスタンス化を行う。返ってくるオブジェクトは，`ComponentFixture`オブジェクトである。
+
+### 外部テンプレートを含むコンポーネントのテスト
+- コンポーネントに外部テンプレートが含まれる場合，テストも若干複雑になる。
+- `beforeEach(async({外部テンプレートのコンパイル}))` みたいな形で，非同期的に外部テンプレートのコンパイルを行う必要があるらしい。そうすると，ここでの処理が終わった後に後続の処理が呼ばれる（なぜそうする？）
+
+例：
+```js
+import { DebugElement } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { By }           from '@angular/platform-browser';
+
+import { AppComponent } from './app.component';
+
+describe('AppComponent', function () {
+  let des: DebugElement[];
+  let comp: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [ AppComponent ],
+    })
+    .compileComponents();
+  }));
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [ AppComponent ],
+    })
+    .compileComponents()
+    .then((result) => {
+      fixture = TestBed.createComponent(AppComponent);
+      comp = fixture.componentInstance;
+      des = fixture.debugElement.queryAll(By.css('tr'));
+    });
+  }));
+
+    beforeEach(() => {
+      fixture = TestBed.createComponent(AppComponent);
+      comp = fixture.componentInstance;
+    });
+
+  it('テーブルの行数を確認', () => {
+    fixture.detectChanges();
+    des = fixture.debugElement.queryAll(By.css('tr'));
+    expect(des.length).toEqual(6);
+  });
+});
+```
+
+- 最初の`beforeEach()`でコンパイルを，後続の`beforeEach()`でインスタンス化を行う。
+- ここに特記すべきことではないが，`beforeEach()`は，後続の複数のテストに共通する前処理を行うためのものである。
+
+### 入出力を伴うコンポーネントのテスト
+- `@Input`デコレータで修飾されたプロパティは，普通に代入操作をすることで入力操作を再現する。
+- `@Output`の方はかなりややこしいので p.405 参照。
+
+### サービスに依存したテスト
+- コンポーネントが依存するサービスをそのままテストコードに注入するのはよくない。
+	- ビューはビューの機能，サービスはサービスの機能に徹するべき。
+	- 問題を特定しにくくなる
+	- 開発状況によっては，依存するサービスがまだ完成していないこともある
+	- 時間に依存するものなどがあると，結果の再現性や実行時間の問題がでてくる
+	- 依存サービスが外部サービスにアクセスする場合，テストのためのサーバ環境を準備する必要がある
+
+上記の問題解決のために，**テストダブル** を用いる
+- $double$...代役
+- テスト対象が依存しているサービスを，ダミーのオブジェクトに置き換える
+	- あらかじめ用意された結果を返すオブジェクトを，スタブ(stub)という。
 
 ## テスト Angular公式ページの解説
 [カバレッジレポート](https://angular.jp/guide/testing#%E3%82%AB%E3%83%90%E3%83%AC%E3%83%83%E3%82%B8%E3%83%AC%E3%83%9D%E3%83%BC%E3%83%88%E3%82%92%E6%9C%89%E5%8A%B9%E3%81%AB%E3%81%99%E3%82%8B)
