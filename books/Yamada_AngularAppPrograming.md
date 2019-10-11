@@ -634,6 +634,46 @@ describe('AppComponent', function () {
 - テスト対象が依存しているサービスを，ダミーのオブジェクトに置き換える
 	- あらかじめ用意された結果を返すオブジェクトを，スタブ(stub)という。
 
+## 10.4 E2Eテスト
+- Protractorというテストランナーを用いるのが一般的。
+- Protractorでは，内部的にSelenium WebDriverが用いられている。
+- Selenium では，ブラウザへの文字入力やボタンクリック，画面遷移などの仕組みを備えている。
+
+### protractor 設定ファイル
+- 設定ファイル `protractor.config.js` で，利用ブラウザや，テストフレームワーク，対象のコードなどを指定できる。
+- 対象とするコードは，設定ファイル内の `specs: []` の中で，ワイルドカードで一括で指定できる。
+
+`app.e2e-spec.ts`
+```js
+import { browser, element, by } from 'protractor';
+
+describe('QuickStart E2E Tests', function () {
+
+  let expectedMsg = 'Hello Angular';
+
+  beforeEach(function () {
+    browser.get('');
+  });
+
+  it('遷移のテスト', function() {
+	// ページタイトルの確認
+    expect(browser.getTitle()).toEqual('Angular QuickStart');
+    expect(element(by.css('h2')).getText()).toEqual('メインページ');
+    // リンクをクリックしてページを移動
+    element(by.linkText('Exampleページ')).click();
+    expect(element(by.css('h2')).getText()).toEqual('Example');
+  });
+});
+```
+- ブラウザを操作する`browser`オブジェクト
+    - 中でも`get`メソッドはよく使われる。設定ファイルで指定した`baseURL`以降のURLを引数として，そのページを開く。
+    - `browser`オブジェクトには，ページをn秒間休止する，ページを閉じる，ページのソースを取得する，などの便利メソッドがある。
+- `element/element.all` メソッド
+    - アプリにアクセスした結果を確認するためのメソッド。`element/element.all`で，単一/複数 の要素を取得する。
+    - elementはlocatorオブジェクトを引数としてとり，locatorには，`css`，`id`などのセレクターがある。
+ - 要素には，クリックをしたり，テキストを取得するための豊富なメソッドが存在。
+ - element.allは配列オブジェクトをとってくるので，配列にアクセスするためのメソッドがある。
+
 # 11 Angular 関連ライブラリ・ツール
 - Angularの標準機能だけでは冗長になりやすい，目的に特化した機能
 	- アコーディオンパネル，検証機能，国際化対応
