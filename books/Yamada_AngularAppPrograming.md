@@ -643,6 +643,7 @@ describe('AppComponent', function () {
 - 設定ファイル `protractor.config.js` で，利用ブラウザや，テストフレームワーク，対象のコードなどを指定できる。
 - 対象とするコードは，設定ファイル内の `specs: []` の中で，ワイルドカードで一括で指定できる。
 
+### テストコード `.e2e-spec.ts`
 `app.e2e-spec.ts`
 ```js
 import { browser, element, by } from 'protractor';
@@ -699,6 +700,11 @@ describe('QuickStart E2E Tests', function () {
 ## テスト Angular公式ページの解説
 [カバレッジレポート](https://angular.jp/guide/testing#%E3%82%AB%E3%83%90%E3%83%AC%E3%83%83%E3%82%B8%E3%83%AC%E3%83%9D%E3%83%BC%E3%83%88%E3%82%92%E6%9C%89%E5%8A%B9%E3%81%AB%E3%81%99%E3%82%8B)
 
+# その他
+## CORS - Cross-Origin Resource Sharing
+- クライアント・フロントエンド・バックエンド のように，クライアントがアクセスするリソース先のドメインが２つあるような場合，バックエンドはCORSという仕組みを使って，フロントエンド以外からのアクセスを制限できる。
+- CORSは，HTTPヘッダに特定の要素を追加することで実現できる。
+参考：[https://dev.classmethod.jp/etc/about-cors/](https://dev.classmethod.jp/etc/about-cors/)
 
 # Snipets
 
