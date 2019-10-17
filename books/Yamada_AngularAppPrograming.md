@@ -670,7 +670,7 @@ describe('QuickStart E2E Tests', function () {
     - 中でも`get`メソッドはよく使われる。設定ファイルで指定した`baseURL`以降のURLを引数として，そのページを開く。
     - `browser`オブジェクトには，ページをn秒間休止する，ページを閉じる，ページのソースを取得する，などの便利メソッドがある。
 - `element/element.all` メソッド
-    - アプリにアクセスした結果を確認するためのメソッド。`element/element.all`で，単一/複数 の要素を取得する。
+    - アプリにアクセスした結果を確認するためのメソッド。`element/element.all`で，単一/複数 の要素を取得する。詳細：[Protractor API]([https://www.protractortest.org/#/api?view=ElementArrayFinder](https://www.protractortest.org/#/api?view=ElementArrayFinder))
     - elementはlocatorオブジェクトを引数としてとり，locatorには，`css`，`id`などのセレクターがある。
  - 要素には，クリックをしたり，テキストを取得するための豊富なメソッドが存在。
  - element.allは配列オブジェクトをとってくるので，配列にアクセスするためのメソッドがある。
@@ -705,6 +705,37 @@ describe('QuickStart E2E Tests', function () {
 - クライアント・フロントエンド・バックエンド のように，クライアントがアクセスするリソース先のドメインが２つあるような場合，バックエンドはCORSという仕組みを使って，フロントエンド以外からのアクセスを制限できる。
 - CORSは，HTTPヘッダに特定の要素を追加することで実現できる。
 参考：[https://dev.classmethod.jp/etc/about-cors/](https://dev.classmethod.jp/etc/about-cors/)
+
+## DOM：Document Object Model
+JavaScriptでHTMLの要素を操作するための仕組み。例えば，`<img src="sample.jpg">`の中身を変更して画像をさしかえるといった操作をjs側からできる。
+
+### DOMの階層構造
+```html
+<html>  
+	<head>  
+		<title>DOMってなにー？ │ JavaScriptのサイト</title>  
+	</head>  
+	<body>  
+		<h1>JavaScriptのサイト</h1>  
+		<h2>DOMってなにー？</h2>  
+		<p><strong>Document Object Model</strong>の略称です。</p>  
+	</body>  
+</html>
+```
+![](http://piyo-js.com/05/images/img_dom.gif)
+
+引用：[JavaScript 入門講座 DOMとは，](http://piyo-js.com/05/dom.html)
+
+### 使い方，実装
+
+> 例えば、標準 DOM は以下のコードにおける `getElementsByTagName` メソッドが文書内のすべての `<P>` 要素のリストを返さなければならないと定義しています。
+> [https://developer.mozilla.org/ja/docs/Web/API/Document_Object_Model/Introduction](https://developer.mozilla.org/ja/docs/Web/API/Document_Object_Model/Introduction)
+```js
+var paragraphs = document.getElementsByTagName("P");
+// paragraphs[0] は最初の <p> 要素
+// paragraphs[1] は 2 番目の <p> 要素...
+alert(paragraphs[0].nodeName);
+```
 
 # Snipets
 
