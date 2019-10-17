@@ -1,4 +1,4 @@
-   　　　　　　　　　　　　　　　　　　　　　　　　 　　　　　　　 # 1.1 JavaScriptの歴史
+# 1.1 JavaScriptの歴史
 
 JavaScriptフレームワークが登場するにいたる歴史的経緯を振り返る。
 
