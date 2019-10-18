@@ -1,4 +1,4 @@
-# 1.1 JavaScriptの歴史
+   　　　　　　　　　　　　　　　　　　　　　　　　 　　　　　　　 # 1.1 JavaScriptの歴史
 
 JavaScriptフレームワークが登場するにいたる歴史的経緯を振り返る。
 
@@ -674,6 +674,16 @@ describe('QuickStart E2E Tests', function () {
     - elementはlocatorオブジェクトを引数としてとり，locatorには，`css`，`id`などのセレクターがある。
  - 要素には，クリックをしたり，テキストを取得するための豊富なメソッドが存在。
  - element.allは配列オブジェクトをとってくるので，配列にアクセスするためのメソッドがある。
+
+### 表要素の取得 `element.all(by.repeater('<class name>'))`
+- 表の要素数などを配列でとりたいときに使う。
+- あらかじめ，表要素の`<tr>`の中に`ng-repeater="<class name>"` みたいな感じで埋め込む。
+code
+```js
+    element.all(by.repeater('<class name>')).count().then(function(size) {
+      arrayLengthAfter = size; // Promise オブジェクトの中身ができたときに実行される。
+    });
+```
 
 # 11 Angular 関連ライブラリ・ツール
 - Angularの標準機能だけでは冗長になりやすい，目的に特化した機能
