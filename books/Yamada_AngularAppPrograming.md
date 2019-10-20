@@ -634,6 +634,57 @@ describe('AppComponent', function () {
 - テスト対象が依存しているサービスを，ダミーのオブジェクトに置き換える
 	- あらかじめ用意された結果を返すオブジェクトを，スタブ(stub)という。
 
+## 10.4 E2Eテスト
+- Protractorというテストランナーを用いるのが一般的。
+- Protractorでは，内部的にSelenium WebDriverが用いられている。
+- Selenium では，ブラウザへの文字入力やボタンクリック，画面遷移などの仕組みを備えている。
+
+### protractor 設定ファイル
+- 設定ファイル `protractor.config.js` で，利用ブラウザや，テストフレームワーク，対象のコードなどを指定できる。
+- 対象とするコードは，設定ファイル内の `specs: []` の中で，ワイルドカードで一括で指定できる。
+
+### テストコード `.e2e-spec.ts`
+`app.e2e-spec.ts`
+```js
+import { browser, element, by } from 'protractor';
+
+describe('QuickStart E2E Tests', function () {
+
+  let expectedMsg = 'Hello Angular';
+
+  beforeEach(function () {
+    browser.get('');
+  });
+
+  it('遷移のテスト', function() {
+	// ページタイトルの確認
+    expect(browser.getTitle()).toEqual('Angular QuickStart');
+    expect(element(by.css('h2')).getText()).toEqual('メインページ');
+    // リンクをクリックしてページを移動
+    element(by.linkText('Exampleページ')).click();
+    expect(element(by.css('h2')).getText()).toEqual('Example');
+  });
+});
+```
+- ブラウザを操作する`browser`オブジェクト
+    - 中でも`get`メソッドはよく使われる。設定ファイルで指定した`baseURL`以降のURLを引数として，そのページを開く。
+    - `browser`オブジェクトには，ページをn秒間休止する，ページを閉じる，ページのソースを取得する，などの便利メソッドがある。
+- `element/element.all` メソッド
+    - アプリにアクセスした結果を確認するためのメソッド。`element/element.all`で，単一/複数 の要素を取得する。詳細：[Protractor API]([https://www.protractortest.org/#/api?view=ElementArrayFinder](https://www.protractortest.org/#/api?view=ElementArrayFinder))
+    - elementはlocatorオブジェクトを引数としてとり，locatorには，`css`，`id`などのセレクターがある。
+ - 要素には，クリックをしたり，テキストを取得するための豊富なメソッドが存在。
+ - element.allは配列オブジェクトをとってくるので，配列にアクセスするためのメソッドがある。
+
+### 表要素の取得 `element.all(by.repeater('<class name>'))`
+- 表の要素数などを配列でとりたいときに使う。
+- あらかじめ，表要素の`<tr>`の中に`ng-repeater="<class name>"` みたいな感じで埋め込む。
+code
+```js
+    element.all(by.repeater('<class name>')).count().then(function(size) {
+      arrayLengthAfter = size; // Promise オブジェクトの中身ができたときに実行される。
+    });
+```
+
 # 11 Angular 関連ライブラリ・ツール
 - Angularの標準機能だけでは冗長になりやすい，目的に特化した機能
 	- アコーディオンパネル，検証機能，国際化対応
@@ -659,6 +710,42 @@ describe('AppComponent', function () {
 ## テスト Angular公式ページの解説
 [カバレッジレポート](https://angular.jp/guide/testing#%E3%82%AB%E3%83%90%E3%83%AC%E3%83%83%E3%82%B8%E3%83%AC%E3%83%9D%E3%83%BC%E3%83%88%E3%82%92%E6%9C%89%E5%8A%B9%E3%81%AB%E3%81%99%E3%82%8B)
 
+# その他
+## CORS - Cross-Origin Resource Sharing
+- クライアント・フロントエンド・バックエンド のように，クライアントがアクセスするリソース先のドメインが２つあるような場合，バックエンドはCORSという仕組みを使って，フロントエンド以外からのアクセスを制限できる。
+- CORSは，HTTPヘッダに特定の要素を追加することで実現できる。
+参考：[https://dev.classmethod.jp/etc/about-cors/](https://dev.classmethod.jp/etc/about-cors/)
+
+## DOM：Document Object Model
+JavaScriptでHTMLの要素を操作するための仕組み。例えば，`<img src="sample.jpg">`の中身を変更して画像をさしかえるといった操作をjs側からできる。
+
+### DOMの階層構造
+```html
+<html>  
+	<head>  
+		<title>DOMってなにー？ │ JavaScriptのサイト</title>  
+	</head>  
+	<body>  
+		<h1>JavaScriptのサイト</h1>  
+		<h2>DOMってなにー？</h2>  
+		<p><strong>Document Object Model</strong>の略称です。</p>  
+	</body>  
+</html>
+```
+![](http://piyo-js.com/05/images/img_dom.gif)
+
+引用：[JavaScript 入門講座 DOMとは，](http://piyo-js.com/05/dom.html)
+
+### 使い方，実装
+
+> 例えば、標準 DOM は以下のコードにおける `getElementsByTagName` メソッドが文書内のすべての `<P>` 要素のリストを返さなければならないと定義しています。
+> [https://developer.mozilla.org/ja/docs/Web/API/Document_Object_Model/Introduction](https://developer.mozilla.org/ja/docs/Web/API/Document_Object_Model/Introduction)
+```js
+var paragraphs = document.getElementsByTagName("P");
+// paragraphs[0] は最初の <p> 要素
+// paragraphs[1] は 2 番目の <p> 要素...
+alert(paragraphs[0].nodeName);
+```
 
 # Snipets
 
