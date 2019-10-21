@@ -675,7 +675,16 @@ describe('QuickStart E2E Tests', function () {
  - 要素には，クリックをしたり，テキストを取得するための豊富なメソッドが存在。
  - element.allは配列オブジェクトをとってくるので，配列にアクセスするためのメソッドがある。
 
-### 表要素の取得 `element.all(by.repeater('<class name>'))`
+### 表要素の取得 - 対象の要素のHTMLタグに`id='<name>'`をつける
+- 正統な方法としては，下記の`element.all()`を使うべきだと思われるが，何らかの理由（調べてもよくわからないエラーが出るなど）でできない場合の方法を示す。
+- 対象とする表項目`<td>`を`<td id='item'>`に変更する。
+```js
+element.all(by.id('item')).then(function(array) {
+  // 表項目の特定の列の要素の，上から0番目のテキストを取得し，比較
+  expect(array[0].getText()).toEqual('item_name'); 
+});
+```
+### 表要素の取得 - 正統な方法`element.all(by.repeater('<class name>'))`
 - 表の要素数などを配列でとりたいときに使う。
 - あらかじめ，表要素の`<tr>`の中に`ng-repeater="<class name>"` みたいな感じで埋め込む。
 code
@@ -684,6 +693,8 @@ code
       arrayLengthAfter = size; // Promise オブジェクトの中身ができたときに実行される。
     });
 ```
+
+
 
 # 11 Angular 関連ライブラリ・ツール
 - Angularの標準機能だけでは冗長になりやすい，目的に特化した機能
