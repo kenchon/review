@@ -725,6 +725,57 @@ code
 [カバレッジレポート](https://angular.jp/guide/testing#%E3%82%AB%E3%83%90%E3%83%AC%E3%83%83%E3%82%B8%E3%83%AC%E3%83%9D%E3%83%BC%E3%83%88%E3%82%92%E6%9C%89%E5%8A%B9%E3%81%AB%E3%81%99%E3%82%8B)
 
 # その他
+## ルーティング
+- [公式ドキュメント](https://angular.io/guide/router)
+- ルーティングは，リンククリックや，ブラウザバック時の画面遷移の機能を受け持つ。
+
+### 基本
+ルーティングの理解を助ける３つの概念：
+####  base href
+`<base>`要素を`index.html`に追加して，URL構造についてrouterに教えてあげる必要がある。
+`app`フォルダがアプリケーションルートなら，以下のような`<base>`タグを追加する：
+```html
+<base href="/">
+```
+#### Router imports
+`import  { RouterModule, Routes }  from  '@angular/router';`しないといけない。`@angular/core`には入っていない。optionalな機能である。
+
+#### Configuration
+- ルートが設定されたアプリケーションには，必ず一つだけの`Router`インスタンスが対応する。
+- ブラウザのURLが変更されたら，Routerが対応するコンポーネントを探し回る。
+- src/app/app.module.ts に，パスの設定を記述する。
+
+`src/app/app.module.ts`
+```js:src/app/app.module.ts
+const appRoutes: Routes = [
+  { path: 'crisis-center', component: CrisisListComponent }, 
+  // /here/42 がここでルーティングされる
+  { path: 'hero/:id',      component: HeroDetailComponent }, 
+  // 特定のルートに任意のデータを付随させることができる
+  { path: 'heroes', 
+    component: HeroListComponent,
+    data: { title: 'Heroes List' }},
+  // empty path: デフォルトパスを指定するための項目
+  { path: '', 
+    redirectTo: '/heroes',
+    pathMatch: 'full'},
+  // wildcard: どれにも一致しなければ”404 Not Found”に飛ばす
+  { path: '**', component: PageNotFoundComponent }
+];
+
+@NgModule({
+  imports: [
+    RouterModule.forRoot(
+      appRoutes,
+      { enableTracing: true } // <-- debugging purposes only
+    )
+    // other imports here
+  ],
+  ...
+})
+export class AppModule { }
+```
+
 ## CORS - Cross-Origin Resource Sharing
 - クライアント・フロントエンド・バックエンド のように，クライアントがアクセスするリソース先のドメインが２つあるような場合，バックエンドはCORSという仕組みを使って，フロントエンド以外からのアクセスを制限できる。
 - CORSは，HTTPヘッダに特定の要素を追加することで実現できる。
