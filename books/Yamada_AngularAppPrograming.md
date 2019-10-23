@@ -643,7 +643,9 @@ describe('AppComponent', function () {
 - 設定ファイル `protractor.config.js` で，利用ブラウザや，テストフレームワーク，対象のコードなどを指定できる。
 - 対象とするコードは，設定ファイル内の `specs: []` の中で，ワイルドカードで一括で指定できる。
 
-### テストコード `.e2e-spec.ts`
+### e2eテストコード `.e2e-spec.ts`
+> 百聞は一見に如かず
+
 `app.e2e-spec.ts`
 ```js
 import { browser, element, by } from 'protractor';
@@ -674,9 +676,10 @@ describe('QuickStart E2E Tests', function () {
     - elementはlocatorオブジェクトを引数としてとり，locatorには，`css`，`id`などのセレクターがある。
  - 要素には，クリックをしたり，テキストを取得するための豊富なメソッドが存在。
  - element.allは配列オブジェクトをとってくるので，配列にアクセスするためのメソッドがある。
+ - `it()`が１テストケースに対応する。`xit()`にすることでそのテストケースだけexcludeできる。これは，テストスイートを記述する`describe()`についても同様，`fdescribe()`，`xdescribe()`みたいにして，`ng e2e`実行時にテストスイートを実行するかどうかを選択できる。
 
 ### 表要素の取得 - 対象の要素のHTMLタグに`id='<name>'`をつける
-- 正統な方法としては，下記の`element.all()`を使うべきだと思われるが，何らかの理由（調べてもよくわからないエラーが出るなど）でできない場合の方法を示す。
+- 下記の`element.all()`を使わずに，表要素のテストを行う方法。
 - 対象とする表項目`<td>`を`<td id='item'>`に変更する。
 ```js
 element.all(by.id('item')).then(function(array) {
